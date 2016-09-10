@@ -1,0 +1,22 @@
+#!/bin/sh
+
+HOST=$1
+PORT=$2
+CAFILE=$3
+
+if [ -n "${CAFILE}" ] && [ -f "${CAFILE}" ]; then
+    OPTS="-S cafile=${CAFILE}"
+elif [ -n "${CAFILE}" ]; then
+    echo "Invalid CA file \"${CAFILE}\""
+    echo "UNSUPPORTED"
+    exit 0
+fi
+
+ftp ${OPTS} -o /dev/null https://${HOST}:${PORT}/
+if [ "$?" -ne 0 ]; then
+   echo "REJECT"
+else
+   echo "ACCEPT"
+fi
+
+exit 0

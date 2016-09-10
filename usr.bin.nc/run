@@ -1,0 +1,23 @@
+#!/bin/sh
+
+HOST=$1
+PORT=$2
+CAFILE=$3
+
+if [ -n "${CAFILE}" ] && [ -f "${CAFILE}" ]; then
+    OPTS="-R ${CAFILE}"
+elif [ -n "${CAFILE}" ]; then
+    echo "Invalid CA file \"${CAFILE}\""
+    echo "UNSUPPORTED"
+    exit 0
+fi
+
+printf "GET / HTTP/1.1\r\nHost: ${HOST}\r\nConnection: close\r\n\r\n" \
+    | nc ${OPTS} -c -e ${HOST} ${HOST} ${PORT} >/dev/null
+if [ "$?" -ne 0 ]; then
+   echo "REJECT"
+else
+   echo "ACCEPT"
+fi
+
+exit 0
